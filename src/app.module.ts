@@ -16,17 +16,29 @@ import { GodownDiaryModule } from './modules/godown-diary/godown-diary.module';
     ConfigModule.forRoot({
       isGlobal: true,
     }),
-    TypeOrmModule.forRoot({
+    /*TypeOrmModule.forRoot({
       type: 'postgres',
       host: process.env.DB_HOST || 'localhost',
       port: parseInt(process.env.DB_PORT) || 5432,
       username: process.env.DB_USERNAME || 'postgres',
       password: process.env.DB_PASSWORD || 'postgres',
       database: process.env.DB_DATABASE || 'stock_management',
-      entities: [__dirname + '/**/*.entity{.ts,.js}'],
-      synchronize: false, // Set to false in production
+      entities: [__dirname + '/**/ //*.entity{.ts,.js}'],
+      /*synchronize: false, // Set to false in production
       logging: true,
+    }), */
+
+    TypeOrmModule.forRoot({
+      type: 'postgres',
+      url: process.env.DATABASE_URL,
+      entities: [__dirname + '/**/*.entity{.ts,.js}'],
+      synchronize: false,
+      logging: true,
+      ssl: {
+        rejectUnauthorized: false,
+      },
     }),
+
     ProdGroupModule,
     VendorsModule,
     CustomersModule,
