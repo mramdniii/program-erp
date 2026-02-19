@@ -32,7 +32,7 @@ import { GodownDiaryModule } from './modules/godown-diary/godown-diary.module';
       type: 'postgres',
       url: process.env.DATABASE_URL,
       entities: [__dirname + '/**/*.entity{.ts,.js}'],
-      synchronize: false,
+      synchronize: true,
       logging: true,
       ssl: {
         rejectUnauthorized: false,

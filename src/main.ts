@@ -7,7 +7,10 @@ async function bootstrap() {
   
   // Enable CORS
   app.enableCors({
-    origin: 'http://localhost:3000',
+    origin: [
+    "http://localhost:3000",
+    "https://program-erp-frontend-5i5y5k884-mramdanis-projects.vercel.app"
+  ],
     credentials: true,
   });
   
