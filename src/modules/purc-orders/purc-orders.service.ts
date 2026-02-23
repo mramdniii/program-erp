@@ -16,6 +16,12 @@ export class PurcOrdersService {
     private dataSource: DataSource,
   ) {}
 
+  private async generatedOrderNo(): Promise<string> {
+    const count = await this.purcOrderRepo.count();
+    const number = (count + 1).toString().padStart(4, "0");
+    return `PO-${number}`;
+  }
+
   async findAll(): Promise<PurcOrder[]> {
     return this.purcOrderRepo.find({
       relations: ['vendorRel', 'details', 'details.productRel'],
@@ -39,8 +45,10 @@ export class PurcOrdersService {
 
     try {
       // Create purchase order
+      const orderNo = await this.generatedOrderNo();
+
       const order = this.purcOrderRepo.create({
-        orderNo: data.orderNo,
+        orderNo,
         orderDate: data.orderDate,
         vendors: data.vendors,
         notes: data.notes,
@@ -117,7 +125,7 @@ export class PurcOrdersService {
       await queryRunner.manager.delete(GodownDiary, { transRef: order.orderNo });
 
       // Update order
-      order.orderNo = data.orderNo || order.orderNo;
+      //order.orderNo = data.orderNo || order.orderNo;
       order.orderDate = data.orderDate || order.orderDate;
       order.vendors = data.vendors || order.vendors;
       order.notes = data.notes || order.notes;

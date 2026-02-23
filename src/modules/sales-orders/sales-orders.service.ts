@@ -16,6 +16,12 @@ export class SalesOrdersService {
     private dataSource: DataSource,
   ) {}
 
+  private async generatedOrderNo(): Promise<string> {
+    const count = await this.saleDetailRepo.count();
+    const number = (count + 1).toString().padStart(4, "0");
+    return `SO-${number}`;
+  }
+
   async findAll(): Promise<SalesOrder[]> {
     return this.salesOrderRepo.find({
       relations: ['customerRel', 'details', 'details.productRel'],
@@ -38,8 +44,10 @@ export class SalesOrdersService {
     await queryRunner.startTransaction();
 
     try {
+      const orderNo = await this.generatedOrderNo();
+
       const order = this.salesOrderRepo.create({
-        orderNo: data.orderNo,
+        orderNo,
         orderDate: data.orderDate,
         customers: data.customers,
         notes: data.notes,
@@ -120,7 +128,7 @@ export class SalesOrdersService {
       await queryRunner.manager.delete(GodownDiary, { transRef: order.orderNo });
 
       // Update order
-      order.orderNo = data.orderNo || order.orderNo;
+      //order.orderNo = data.orderNo || order.orderNo;
       order.orderDate = data.orderDate || order.orderDate;
       order.customers = data.customers || order.customers;
       order.notes = data.notes || order.notes;
