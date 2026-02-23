@@ -28,6 +28,11 @@ let PurcOrdersService = class PurcOrdersService {
         this.godownDiaryRepo = godownDiaryRepo;
         this.dataSource = dataSource;
     }
+    async generatedOrderNo() {
+        const count = await this.purcOrderRepo.count();
+        const number = (count + 1).toString().padStart(4, "0");
+        return `PO-${number}`;
+    }
     async findAll() {
         return this.purcOrderRepo.find({
             relations: ['vendorRel', 'details', 'details.productRel'],
@@ -48,8 +53,9 @@ let PurcOrdersService = class PurcOrdersService {
         await queryRunner.connect();
         await queryRunner.startTransaction();
         try {
+            const orderNo = await this.generatedOrderNo();
             const order = this.purcOrderRepo.create({
-                orderNo: data.orderNo,
+                orderNo,
                 orderDate: data.orderDate,
                 vendors: data.vendors,
                 notes: data.notes,
@@ -104,7 +110,6 @@ let PurcOrdersService = class PurcOrdersService {
             }
             await queryRunner.manager.delete(purc_detail_entity_1.PurcDetail, { purcOrders: id });
             await queryRunner.manager.delete(godown_diary_entity_1.GodownDiary, { transRef: order.orderNo });
-            order.orderNo = data.orderNo || order.orderNo;
             order.orderDate = data.orderDate || order.orderDate;
             order.vendors = data.vendors || order.vendors;
             order.notes = data.notes || order.notes;

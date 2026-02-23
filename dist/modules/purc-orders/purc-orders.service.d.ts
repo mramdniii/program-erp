@@ -10,6 +10,7 @@ export declare class PurcOrdersService {
     private godownDiaryRepo;
     private dataSource;
     constructor(purcOrderRepo: Repository<PurcOrder>, purcDetailRepo: Repository<PurcDetail>, stockListRepo: Repository<StockList>, godownDiaryRepo: Repository<GodownDiary>, dataSource: DataSource);
+    private generatedOrderNo;
     findAll(): Promise<PurcOrder[]>;
     findOne(id: number): Promise<PurcOrder>;
     create(data: any): Promise<PurcOrder>;
