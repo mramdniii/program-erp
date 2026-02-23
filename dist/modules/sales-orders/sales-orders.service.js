@@ -28,6 +28,11 @@ let SalesOrdersService = class SalesOrdersService {
         this.godownDiaryRepo = godownDiaryRepo;
         this.dataSource = dataSource;
     }
+    async generatedOrderNo() {
+        const count = await this.saleDetailRepo.count();
+        const number = (count + 1).toString().padStart(4, "0");
+        return `SO-${number}`;
+    }
     async findAll() {
         return this.salesOrderRepo.find({
             relations: ['customerRel', 'details', 'details.productRel'],
@@ -48,8 +53,9 @@ let SalesOrdersService = class SalesOrdersService {
         await queryRunner.connect();
         await queryRunner.startTransaction();
         try {
+            const orderNo = await this.generatedOrderNo();
             const order = this.salesOrderRepo.create({
-                orderNo: data.orderNo,
+                orderNo,
                 orderDate: data.orderDate,
                 customers: data.customers,
                 notes: data.notes,
@@ -108,7 +114,6 @@ let SalesOrdersService = class SalesOrdersService {
             }
             await queryRunner.manager.delete(sale_detail_entity_1.SaleDetail, { salesOrders: id });
             await queryRunner.manager.delete(godown_diary_entity_1.GodownDiary, { transRef: order.orderNo });
-            order.orderNo = data.orderNo || order.orderNo;
             order.orderDate = data.orderDate || order.orderDate;
             order.customers = data.customers || order.customers;
             order.notes = data.notes || order.notes;

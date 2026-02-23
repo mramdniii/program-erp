@@ -10,6 +10,7 @@ export declare class SalesOrdersService {
     private godownDiaryRepo;
     private dataSource;
     constructor(salesOrderRepo: Repository<SalesOrder>, saleDetailRepo: Repository<SaleDetail>, stockListRepo: Repository<StockList>, godownDiaryRepo: Repository<GodownDiary>, dataSource: DataSource);
+    private generatedOrderNo;
     findAll(): Promise<SalesOrder[]>;
     findOne(id: number): Promise<SalesOrder>;
     create(data: any): Promise<SalesOrder>;
